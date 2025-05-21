@@ -1,13 +1,13 @@
 use crate::dma;
-use crate::format::tim::TIM;
+// use crate::format::tim::TIM;
 use crate::gpu::colors::WHITE;
 use crate::gpu::primitives::Sprt8;
 use crate::gpu::{Clut, Color, DMAMode, Depth, DispEnv, DrawEnv, Packet, TexColor, TexCoord,
                  TexPage, Vertex, VertexError, VideoMode, GPU_BUFFER_SIZE};
-use crate::hw::gpu::{GP0Command, GP0, GP1};
+use crate::hw::gpu::{GP0, GP1};
 use crate::hw::irq::IRQ;
 use crate::hw::{gpu, irq, Register};
-use crate::include_tim;
+// use crate::include_tim;
 use core::fmt;
 use core::mem::size_of;
 
@@ -112,47 +112,47 @@ impl Framebuffer {
         gpu_dma.send_list(&self.draw_envs[idx]);
     }
 
-    /// Loads a `TIM` file into VRAM.
-    ///
-    /// After loading a TIM into VRAM, the copy in memory isn't necessary so the
-    /// lifetimes of the `TIM` and `LoadedTIM` are completely disconnected.
-    pub fn load_tim<const N: usize, const M: usize>(&mut self, tim: TIM<N, M>) -> LoadedTIM {
-        // Used to avoid implementing GP0Command for any &[u32]
-        // TIM::new ensures that the bitmap data is a valid GP0 command
-        struct CopyToVRAM<'a>(&'a [u32]);
+    // /// Loads a `TIM` file into VRAM.
+    // ///
+    // /// After loading a TIM into VRAM, the copy in memory isn't necessary so the
+    // /// lifetimes of the `TIM` and `LoadedTIM` are completely disconnected.
+    // pub fn load_tim<const N: usize, const M: usize>(&mut self, tim: TIM<N, M>) -> LoadedTIM {
+    //     // Used to avoid implementing GP0Command for any &[u32]
+    //     // TIM::new ensures that the bitmap data is a valid GP0 command
+    //     struct CopyToVRAM<'a>(&'a [u32]);
 
-        impl GP0Command for CopyToVRAM<'_> {
-            fn data(&self) -> &[u32] {
-                self.0
-            }
-        }
+    //     impl GP0Command for CopyToVRAM<'_> {
+    //         fn data(&self) -> &[u32] {
+    //             self.0
+    //         }
+    //     }
 
-        self.draw_sync();
-        self.gp0.send_command(&CopyToVRAM(&tim.bmp.data));
-        let clut = if M != 0 {
-            self.draw_sync();
-            self.gp0.send_command(&CopyToVRAM(&tim.clut.data));
-            Some(tim.clut.offset)
-        } else {
-            None
-        };
+    //     self.draw_sync();
+    //     self.gp0.send_command(&CopyToVRAM(&tim.bmp.data));
+    //     let clut = if M != 0 {
+    //         self.draw_sync();
+    //         self.gp0.send_command(&CopyToVRAM(&tim.clut.data));
+    //         Some(tim.clut.offset)
+    //     } else {
+    //         None
+    //     };
 
-        LoadedTIM {
-            tex_page: tim.bmp.offset,
-            clut,
-        }
-    }
+    //     LoadedTIM {
+    //         tex_page: tim.bmp.offset,
+    //         clut,
+    //     }
+    // }
 
-    /// Loads the default font TIM into VRAM.
-    ///
-    /// This returns a `LoadedTIM` which can then be used to create `TextBox`s
-    /// using `LoadedTIM::new_text_box`. Note that `LoadedTIM` does not track
-    /// lifetimes so it's the user's responsibility to ensure that the font
-    /// remains in VRAM while it's needed.
-    pub fn load_default_font(&mut self) -> LoadedTIM {
-        let font = include_tim!("../font.tim");
-        self.load_tim(font)
-    }
+    // /// Loads the default font TIM into VRAM.
+    // ///
+    // /// This returns a `LoadedTIM` which can then be used to create `TextBox`s
+    // /// using `LoadedTIM::new_text_box`. Note that `LoadedTIM` does not track
+    // /// lifetimes so it's the user's responsibility to ensure that the font
+    // /// remains in VRAM while it's needed.
+    // pub fn load_default_font(&mut self) -> LoadedTIM {
+    //     let font = include_tim!("../font.tim");
+    //     self.load_tim(font)
+    // }
 
     /// Spins until the GPU is ready to draw.
     pub fn draw_sync(&mut self) {

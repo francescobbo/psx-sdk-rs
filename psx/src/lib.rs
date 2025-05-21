@@ -31,10 +31,9 @@
 #![no_std]
 #![deny(missing_docs)]
 // For compile-time Wavefront OBJ parser
-#![feature(const_mut_refs, maybe_uninit_array_assume_init)]
+#![feature(maybe_uninit_array_assume_init)]
 // Used to make `AsCStr` efficient
 #![feature(
-    maybe_uninit_uninit_array,
     maybe_uninit_slice,
     maybe_uninit_write_slice
 )]
@@ -53,13 +52,14 @@
 #![test_runner(crate::test::runner)]
 #![reexport_test_harness_main = "main"]
 #![cfg_attr(test, no_main)]
+#![allow(static_mut_refs)]
 
 // This module is first since it defines the fuzz macros for tests
 #[macro_use]
 mod test;
 
 pub mod dma;
-pub mod format;
+// pub mod format;
 mod framebuffer;
 pub mod gpu;
 #[doc(hidden)]

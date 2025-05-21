@@ -1,5 +1,5 @@
 use crate::hw::{cop0, Register};
-use crate::{dprintln, println, Framebuffer};
+use crate::println;
 
 #[panic_handler]
 fn panic(info: &core::panic::PanicInfo) -> ! {
@@ -47,30 +47,30 @@ fn min_panic(info: &core::panic::PanicInfo) {
     println!("{}", info.message());
 }
 
-fn normal_panic(info: &core::panic::PanicInfo) {
+fn normal_panic(_info: &core::panic::PanicInfo) {
     // We have no idea what state the GPU was in when the panic happened, so reset
     // it to a known state and reload the font into VRAM.
-    let mut fb = Framebuffer::default();
-    let mut txt = fb.load_default_font().new_text_box((0, 8), (320, 240));
-    loop {
-        txt.reset();
-        match info.location() {
-            Some(location) => {
-                dprintln!(
-                    txt,
-                    "Panicked at {}:{}:{}",
-                    location.file(),
-                    location.line(),
-                    location.column()
-                );
-            },
-            None => {
-                dprintln!(txt, "Panicked at unknown location");
-            },
-        }
-        dprintln!(txt, "{}", info.message());
-        fb.draw_sync();
-        fb.wait_vblank();
-        fb.swap();
-    }
+    // let mut fb = Framebuffer::default();
+    // let mut txt = fb.load_default_font().new_text_box((0, 8), (320, 240));
+    // loop {
+    //     txt.reset();
+    //     match info.location() {
+    //         Some(location) => {
+    //             dprintln!(
+    //                 txt,
+    //                 "Panicked at {}:{}:{}",
+    //                 location.file(),
+    //                 location.line(),
+    //                 location.column()
+    //             );
+    //         },
+    //         None => {
+    //             dprintln!(txt, "Panicked at unknown location");
+    //         },
+    //     }
+    //     dprintln!(txt, "{}", info.message());
+    //     fb.draw_sync();
+    //     fb.wait_vblank();
+    //     fb.swap();
+    // }
 }

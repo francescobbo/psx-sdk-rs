@@ -188,7 +188,7 @@ impl DispEnv {
     /// Creates a new display buffer at `offset` in VRAM with the specified
     /// `size`.
     pub fn new(
-        offset: (i16, i16), size: (i16, i16), video_mode: VideoMode,
+        offset: (i16, i16), _size: (i16, i16), video_mode: VideoMode,
     ) -> Result<Self, VertexError> {
         let offset = Vertex::new(offset);
         let offset = PackedVertex::try_from(offset)?;
