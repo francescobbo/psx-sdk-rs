@@ -144,3 +144,18 @@ impl CriticalSection {
         Self(())
     }
 }
+
+/// Use the debug TTY to print a character to the screen.
+pub fn early_putchar(c: char) {
+    unsafe {
+        let addr = 0x1f80_4000 as *mut u8;
+        core::ptr::write_volatile(addr, c as u8);
+    }
+}
+
+/// Use the debug TTY to print a string to the screen.
+pub fn early_puts(s: &str) {
+    for c in s.chars() {
+        early_putchar(c);
+    }
+}

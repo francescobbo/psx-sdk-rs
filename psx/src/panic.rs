@@ -47,7 +47,7 @@ fn min_panic(info: &core::panic::PanicInfo) {
     println!("{}", info.message());
 }
 
-fn normal_panic(_info: &core::panic::PanicInfo) {
+// fn normal_panic(_info: &core::panic::PanicInfo) {
     // We have no idea what state the GPU was in when the panic happened, so reset
     // it to a known state and reload the font into VRAM.
     // let mut fb = Framebuffer::default();
@@ -73,4 +73,4 @@ fn normal_panic(_info: &core::panic::PanicInfo) {
     //     fb.wait_vblank();
     //     fb.swap();
     // }
-}
+// }
