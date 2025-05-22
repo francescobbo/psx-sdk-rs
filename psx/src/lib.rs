@@ -159,3 +159,43 @@ pub fn early_puts(s: &str) {
         early_putchar(c);
     }
 }
+
+pub fn itoa(n: u32) -> [u8; 10] {
+    let mut buf = [0; 10];
+    let mut i = 0;
+    let mut n = n;
+    while n > 0 {
+        buf[i] = (n % 10) as u8 + b'0';
+        n /= 10;
+        i += 1;
+    }
+    buf[0..i].reverse();
+    buf
+}
+
+pub fn early_putn(n: u32) {
+    let buf = itoa(n);
+    let s = unsafe { core::str::from_utf8_unchecked(&buf) };
+    early_puts(s);
+}
+
+pub fn early_putf(mut n: f32, digits: usize) {
+    let mut integer = n as i32;
+    if (integer < 0) {
+        early_putchar('-');
+        integer = -integer;
+    }
+
+    // Remove the integer part
+    n -= integer as f32;
+
+    // Move the decimal point
+    for _ in 0..digits {
+        n *= 10.0;
+    }
+
+    let decimal = n as u32;
+    early_putn(integer as u32);
+    early_putchar('.');
+    early_putn(decimal);
+}
